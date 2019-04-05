@@ -1,0 +1,57 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<Dialog id="diaOneTimePin" title="{i18n>titleAddOTPDialog}" class="sapUiContentPadding">
+		<content>
+			<MessageStrip id="msOneTimePinDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
+			<form:Form id="formOTPDialog" editable="true" width="450px" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
+				<form:layout>
+					<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="false" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+				</form:layout>
+				<form:formContainers>
+					<form:FormContainer>
+						<form:FormElement>
+							<form:label>
+								<Label required="true" text="How to reach me" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{AppViewModel>SelectedMoCID}"
+									items="{ path: 'AppViewModel>MeansOfCommunication' }" change="onOneTimePinInputChange">
+									<core:ListItem key="{AppViewModel>MoCID}" text="{AppViewModel>MoCValue}"/>
+								</Select>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement visible="{AppViewModel>/isSendOTPVisible}">
+							<form:label>
+								<Label required="false" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Button text="Send OTP" press="onPressSendOTP"/>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement visible="{AppViewModel>/isInputOTPVisible}">
+							<form:label>
+								<Label required="true" text="One Time PIN" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{AppViewModel>OTPValue}"/>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement visible="{AppViewModel>/isReSendOTPVisible}">
+							<form:label>
+								<Label required="false" textAlign="Left"/>
+							</form:label>
+							<form:fields>
+								<Button text="Try again" press="onPressReSendOTP"/>
+							</form:fields>
+						</form:FormElement>
+					</form:FormContainer>
+				</form:formContainers>
+			</form:Form>
+		</content>
+		<beginButton>
+			<Button text="Cancel" press="onPressOneTimePinCancelButton"/>
+		</beginButton>
+		<endButton>
+			<Button text="Confirm" type="Emphasized" press="onPressOneTimePinConfirmButton" enabled="{AppViewModel>/isOTPConfirmButtonEnabled}"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
