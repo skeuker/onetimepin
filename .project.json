@@ -18,6 +18,11 @@
       "templateId": "ui5template.basicSAPUI5ApplicationProject",
       "templateVersion": "1.40.12",
       "dateTimeStamp": "Fri, 05 Apr 2019 08:39:58 GMT"
+    },
+    {
+      "templateId": "servicecatalog.connectivityComponent",
+      "templateVersion": "0.0.0",
+      "dateTimeStamp": "Tue, 09 Apr 2019 11:11:28 GMT"
     }
   ],
   "codeCheckingTriggers": {
@@ -38,5 +43,12 @@
       "xml": "fioriXmlAnalysis",
       "js": "fioriJsValidator"
     }
+  },
+  "mockpreview": {
+    "mockUri": "/sap/opu/odata/pnp/CA_ONETIMEPIN_SRV",
+    "metadataFilePath": "",
+    "loadJSONFiles": false,
+    "loadCustomRequests": false,
+    "mockRequestsFilePath": ""
   }
 }

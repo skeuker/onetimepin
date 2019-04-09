@@ -9,14 +9,22 @@ sap.ui.define([
 		//on initialization
 		onInit: function() {
 
+			//instantiate view model
+			this.oViewModel = new JSONModel({});
+
 			//set view model to owner component
-			this.setModel(new JSONModel({}), "AppViewModel");
+			this.setModel(this.oViewModel, "AppViewModel");
 
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
 
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
+
+			//initiate interaction with message manager	
+			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			this.oMessageManager = sap.ui.getCore().getMessageManager();
+			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
 
 		},
 
@@ -61,6 +69,7 @@ sap.ui.define([
 					"MoCID": "eMail",
 					"MoCValue": "stefan.keuker@gmail.com"
 				}],
+				"remainingOTPValidity": "",
 				"SelectedMoCID": "CellPhone"
 			};
 
@@ -84,6 +93,10 @@ sap.ui.define([
 		//request to send OTP
 		onPressSendOTP: function() {
 
+			//local data declaration
+			var sSelectedMoCID;
+			var sSelectedMoCValue;
+
 			//set OTP input visible
 			this.getModel("AppViewModel").setProperty("/isInputOTPVisible", true);
 
@@ -95,6 +108,58 @@ sap.ui.define([
 
 			//set means of communication select to disabled
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", false);
+
+			//get selected means of communication
+			sSelectedMoCID = this.getModel("AppViewModel").getProperty("/OTPContext/SelectedMoCID");
+
+			//get attribute value for selected means of communication
+			var aMeansOfCommunication = this.getModel("AppViewModel").getProperty("/OTPContext/MeansOfCommunication");
+			aMeansOfCommunication.forEach(function(oMeansOfCommunication) {
+				if (oMeansOfCommunication.MoCID === sSelectedMoCID) {
+					sSelectedMoCValue = oMeansOfCommunication.MoCValue;
+				}
+			});
+
+			//set view to busy
+			this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", true);
+
+			//request OTP to be sent
+			this.getModel("OneTimePinModel").callFunction("/sendOTP", {
+
+				//url parameters
+				urlParameters: {
+					"Guid": this.getUUID(),
+					"MoCID": sSelectedMoCID,
+					"MoCValue": sSelectedMoCValue
+				},
+
+				//success handler: received declaration details
+				success: function(oData, oResponse) {
+
+					//set OTP input placeholder and invoke count down
+					if (oData.results && oData.results.length > 0) {
+					}
+					
+					//set placeholder to indicate remaining time
+					this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", "60 seconds...");
+	
+					//set view to no longer busy
+					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+
+				}.bind(this),
+
+				//error handler callback function
+				error: function(oError) {
+
+					//render error in OData response 
+					this.renderODataErrorResponseToMessageStrip(oError, "msOneTimePinDialogMessageStrip");
+
+					//set view to no longer busy
+					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+
+				}.bind(this)
+
+			});
 
 		},
 
