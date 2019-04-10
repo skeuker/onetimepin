@@ -18,18 +18,18 @@ sap.ui.define([
 			//set instance attributes
 			this.oResourceBundle = oComponent.getModel("i18n").getResourceBundle();
 			this.oComponent = oComponent;
-			this.oHierarchyModel = oComponent.getModel("HierarchyModel");
+			this.oOneTimePinModel = oComponent.getModel("OneTimePinModel");
 			this.bMessageBoxOpen = false;
-			this._sErrorText = this.oResourceBundle.getText("messageODataError");
+			this.sErrorText = this.oResourceBundle.getText("messageODataError");
 
 			//attach error handler for metadata load failure
-			this.oHierarchyModel.attachMetadataFailed(function (oEvent) {
+			this.oOneTimePinModel.attachMetadataFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
 				this.showServiceError(oParams.response);
 			}, this);
 
 			//attach error handler for unhandled OData service request errors
-			this.oHierarchyModel.attachRequestFailed(function (oEvent) {
+			this.oOneTimePinModel.attachRequestFailed(function (oEvent) {
 
 				//get service request failure event
 				var oParams = oEvent.getParameters();
@@ -81,8 +81,8 @@ sap.ui.define([
 				try {
 
 					//parse error response		
-					var oErrorText = JSON.parse(oError.responseText);
-					sMessageText = oErrorText.error.message.value;
+					var osErrorText = JSON.parse(oError.responseText);
+					sMessageText = osErrorText.error.message.value;
 
 					//exception handling
 				} catch (exception) {
@@ -118,7 +118,7 @@ sap.ui.define([
 			MessageBox.error(
 
 				//message box text
-				this._sErrorText,
+				this.sErrorText,
 
 				//message box parameters
 				{

@@ -137,14 +137,41 @@ sap.ui.define([
 				success: function(oData, oResponse) {
 
 					//set OTP input placeholder and invoke count down
-					if (oData.results && oData.results.length > 0) {
-					}
-					
-					//set placeholder to indicate remaining time
-					this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", "60 seconds...");
-	
+					if (oData.results && oData.results.length > 0) {}
+
+					//set OTP input placeholder to indicate remaining validity time
+					var iRemainingOTPValidityInSeconds = 60;
+					var oOTPValidityTimer = setInterval(function() {
+
+						//build string of remaining OTP validity
+						var sRemainingOTPValidity = iRemainingOTPValidityInSeconds + " seconds...";
+
+						//set remaining OTP validity in seconds as OTP input placeholder
+						this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", sRemainingOTPValidity);
+
+						//end of OTP validity reached
+						if (iRemainingOTPValidityInSeconds <= 0) {
+
+							//advise user to send another OTP
+							this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", this.getResourceBundle().getText(
+								"messageOTPExpiredDoTryAgain"));
+
+							//clear interval
+							oOTPValidityTimer.clearInterval();
+
+						}
+
+						//count down remaining OTP validity in seconds
+						iRemainingOTPValidityInSeconds = iRemainingOTPValidityInSeconds - 1;
+
+					}.bind(this), 1000);
+
 					//set view to no longer busy
 					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+
+					//send message using requested message strip
+					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully"), "Success", sap.ui.getCore().byId(
+						"msOneTimePinDialogMessageStrip"));
 
 				}.bind(this),
 
