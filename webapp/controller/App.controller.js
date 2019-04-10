@@ -96,6 +96,19 @@ sap.ui.define([
 			//local data declaration
 			var sSelectedMoCID;
 			var sSelectedMoCValue;
+			var aMessageVariables = [];
+			var iRemainingOTPValidityInSeconds;
+
+			//clear interval where applicable
+			if (this.oOTPValidityTimer) {
+
+				//terminate timer event
+				clearInterval(this.oOTPValidityTimer);
+
+				//initialize UI display of OTP validity in seconds
+				this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", null);
+
+			}
 
 			//set OTP input visible
 			this.getModel("AppViewModel").setProperty("/isInputOTPVisible", true);
@@ -139,12 +152,14 @@ sap.ui.define([
 					//set OTP input placeholder and invoke count down
 					if (oData.results && oData.results.length > 0) {}
 
+					//set OTP validity period
+					iRemainingOTPValidityInSeconds = 60;
+
 					//set OTP input placeholder to indicate remaining validity time
-					var iRemainingOTPValidityInSeconds = 60;
-					var oOTPValidityTimer = setInterval(function() {
+					this.oOTPValidityTimer = setInterval(function() {
 
 						//build string of remaining OTP validity
-						var sRemainingOTPValidity = iRemainingOTPValidityInSeconds + " seconds...";
+						var sRemainingOTPValidity = "Enter in the next " + iRemainingOTPValidityInSeconds + " seconds...";
 
 						//set remaining OTP validity in seconds as OTP input placeholder
 						this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", sRemainingOTPValidity);
@@ -156,8 +171,11 @@ sap.ui.define([
 							this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", this.getResourceBundle().getText(
 								"messageOTPExpiredDoTryAgain"));
 
+							//hide message strip
+							sap.ui.getCore().byId("msOneTimePinDialogMessageStrip").setVisible(false);
+
 							//clear interval
-							oOTPValidityTimer.clearInterval();
+							clearInterval(this.oOTPValidityTimer);
 
 						}
 
@@ -169,9 +187,12 @@ sap.ui.define([
 					//set view to no longer busy
 					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
 
+					//set array of message variables
+					aMessageVariables.push(sSelectedMoCValue);
+
 					//send message using requested message strip
-					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully"), "Success", sap.ui.getCore().byId(
-						"msOneTimePinDialogMessageStrip"));
+					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", sap.ui.getCore()
+						.byId("msOneTimePinDialogMessageStrip"));
 
 				}.bind(this),
 
