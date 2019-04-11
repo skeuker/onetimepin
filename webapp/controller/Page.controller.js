@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(BaseController, JSONModel) {
 	"use strict";
 
-	return BaseController.extend("pnp.onetimepin.controller.App", {
+	return BaseController.extend("pnp.onetimepin.controller.Page", {
 
 		//on initialization
 		onInit: function() {
@@ -17,6 +17,9 @@ sap.ui.define([
 
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
+
+			//attach to display event for navigation without hash change 
+			this.getRouter().getTarget("Page").attachDisplay(this.onDisplay, this);
 
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
@@ -40,25 +43,11 @@ sap.ui.define([
 
 		},
 
-		//launch OTP dialog
-		onPressLaunchOTPDialog: function() {
+		//display of One Time Pin view
+		onDisplay: function() {
 
-			//create one time pin dialog
-			this.oOneTimePinDialog = sap.ui.xmlfragment("pnp.onetimepin.fragment.OneTimePinDialog", this);
-
-			//add dialog to this view
-			this.getView().addDependent(this.oOneTimePinDialog);
-
-			//attach to the dialog's close event
-			this.oOneTimePinDialog.attachAfterClose(function() {
-
-				//initialize UI control attributes
-				this.initOTPDialogUIControlAttributes();
-
-				//distroy dialog
-				this.oOneTimePinDialog.destroy();
-
-			}.bind(this));
+			//initialize UI control attributes
+			this.initOTPDialogUIControlAttributes();
 
 			//instantiate new OTP context
 			var oOTPContext = {
@@ -77,16 +66,13 @@ sap.ui.define([
 			this.getModel("AppViewModel").setProperty("/OTPContext", oOTPContext);
 
 			//bind dialog to view model instance 
-			this.oOneTimePinDialog.bindElement({
+			this.getView().bindElement({
 				model: "AppViewModel",
 				path: "/OTPContext"
 			});
 
 			//initialize input fields
-			this.resetFormInput(sap.ui.getCore().byId("formOTPDialog"));
-
-			//delay because addDependent will do a async rerendering 
-			this.oOneTimePinDialog.open();
+			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
 		},
 
@@ -201,7 +187,7 @@ sap.ui.define([
 								"messageOTPExpiredDoTryAgain"));
 
 							//hide message strip
-							sap.ui.getCore().byId("msOneTimePinDialogMessageStrip").setVisible(false);
+							this.getView().byId("msOneTimePinDialogMessageStrip").setVisible(false);
 
 							//clear interval
 							clearInterval(this.oOTPValidityTimer);
@@ -220,7 +206,7 @@ sap.ui.define([
 					aMessageVariables.push(sSelectedMoCValue);
 
 					//send message using requested message strip
-					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", sap.ui.getCore()
+					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", this.getView()
 						.byId("msOneTimePinDialogMessageStrip"));
 
 				}.bind(this),
@@ -256,10 +242,10 @@ sap.ui.define([
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
 
 			//initialize input fields
-			this.resetFormInput(sap.ui.getCore().byId("formOTPDialog"));
+			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
 			//set dialog message strip to invisible for next attempt
-			sap.ui.getCore().byId("msOneTimePinDialogMessageStrip").setVisible(false);
+			this.getView().byId("msOneTimePinDialogMessageStrip").setVisible(false);
 
 		},
 
@@ -281,23 +267,15 @@ sap.ui.define([
 
 		},
 
-		//cancel OTP interaction
-		onPressOneTimePinCancelButton: function() {
-
-			//cancel OTP interaction dialog
-			sap.ui.getCore().byId("diaOneTimePin").close();
-
-		},
-
 		//confirm OTP interactin
 		onPressOneTimePinConfirmButton: function() {
 
 			//message handling: invalid form input where applicable
-			if (this.hasMissingInput([sap.ui.getCore().byId("formOTPDialog")]).length > 0) {
+			if (this.hasMissingInput([this.getView().byId("formOTPDialog")]).length > 0) {
 
 				//message handling: incomplete form input detected
 				this.sendStripMessage(this.getResourceBundle().getText("messageInputCheckedWithErrors"),
-					sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msOneTimePinDialogMessageStrip"));
+					sap.ui.core.MessageType.Error, this.getView().byId("msOneTimePinDialogMessageStrip"));
 
 				//no further processing at this point
 				return;
@@ -324,15 +302,16 @@ sap.ui.define([
 
 						//message handling: incorrect OTP entered	
 						this.sendStripMessage(this.getResourceBundle().getText("messageInvalidOTPEntered"),
-							sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msOneTimePinDialogMessageStrip"));
+							sap.ui.core.MessageType.Error, this.getView().byId("msOneTimePinDialogMessageStrip"));
 
 						//no further processing at this point
 						return;
 
 					}
 
-					//close OTP interaction dialog
-					sap.ui.getCore().byId("diaOneTimePin").close();
+					//message handling: OTP validated successfully
+					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
+						"Success", this.getView().byId("msOneTimePinDialogMessageStrip"));
 
 				}.bind(this),
 

@@ -11,7 +11,7 @@ sap.ui.define([
 		 * @class
 		 * @param {sap.ui.core.UIComponent} oComponent reference to the app's component
 		 * @public
-		 * @alias pnp.survey.controller.ErrorHandler
+		 * @alias pnp.onetimepin.controller.ErrorHandler
 		 */
 		constructor: function (oComponent) {
 
@@ -24,8 +24,13 @@ sap.ui.define([
 
 			//attach error handler for metadata load failure
 			this.oOneTimePinModel.attachMetadataFailed(function (oEvent) {
+				
+				//get failure notification
 				var oParams = oEvent.getParameters();
+				
+				//render server or connectivity error
 				this.showServiceError(oParams.response);
+				
 			}, this);
 
 			//attach error handler for unhandled OData service request errors
