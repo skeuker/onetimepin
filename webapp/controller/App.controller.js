@@ -63,14 +63,14 @@ sap.ui.define([
 			//instantiate new OTP context
 			var oOTPContext = {
 				"MeansOfCommunication": [{
-					"MoCID": "CellPhone",
+					"MoCID": "0",
 					"MoCValue": "082-9777444"
 				}, {
-					"MoCID": "eMail",
+					"MoCID": "1",
 					"MoCValue": "stefan.keuker@gmail.com"
 				}],
-				"remainingOTPValidity": "",
-				"SelectedMoCID": "CellPhone"
+				"OTPPurpose": "Block & Replace",
+				"SelectedMoCID": "0"
 			};
 
 			//make available new hierarchy item for binding
@@ -94,6 +94,7 @@ sap.ui.define([
 		onPressSendOTP: function() {
 
 			//local data declaration
+			var sOTPPurpose;
 			var sSelectedMoCID;
 			var sSelectedMoCValue;
 			var aMessageVariables = [];
@@ -122,26 +123,54 @@ sap.ui.define([
 			//set means of communication select to disabled
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", false);
 
-			//get selected means of communication
+			//get selected means of communication and OTP purpose
+			sOTPPurpose = this.getModel("AppViewModel").getProperty("/OTPContext/OTPPurpose");
 			sSelectedMoCID = this.getModel("AppViewModel").getProperty("/OTPContext/SelectedMoCID");
 
 			//get attribute value for selected means of communication
 			var aMeansOfCommunication = this.getModel("AppViewModel").getProperty("/OTPContext/MeansOfCommunication");
 			aMeansOfCommunication.forEach(function(oMeansOfCommunication) {
+
+				//where selected means of communication matches 
 				if (oMeansOfCommunication.MoCID === sSelectedMoCID) {
+
+					//adopt means of communication value
 					sSelectedMoCValue = oMeansOfCommunication.MoCValue;
+
+					//format as mobile phone number where applicable
+					if (oMeansOfCommunication.MoCID === "0") {
+
+						//replace (0) where specified
+						sSelectedMoCValue = sSelectedMoCValue.replace(/\(0\)/, "");
+
+						//remove formatting characters
+						sSelectedMoCValue = sSelectedMoCValue.replace(/-/, "");
+						sSelectedMoCValue = sSelectedMoCValue.replace(/\(/, "");
+						sSelectedMoCValue = sSelectedMoCValue.replace(/\)/, "");
+
+						//replace '+' as prefix to country code
+						sSelectedMoCValue = sSelectedMoCValue.replace(/\+/, "00");
+
+					}
 				}
 			});
 
 			//set view to busy
 			this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", true);
 
+			//determine an OTP request ID
+			var sOTPRequestID = this.getUUID();
+
+			//keep track of this request ID in the OTP context
+			this.getModel("AppViewModel").setProperty("/OTPContext/OTPRequestID", sOTPRequestID);
+
 			//request OTP to be sent
 			this.getModel("OneTimePinModel").callFunction("/sendOTP", {
 
 				//url parameters
 				urlParameters: {
-					"Guid": this.getUUID(),
+					"OTPRequestID": sOTPRequestID,
+					"OTPPurpose": sOTPPurpose,
 					"MoCID": sSelectedMoCID,
 					"MoCValue": sSelectedMoCValue
 				},
@@ -241,7 +270,7 @@ sap.ui.define([
 			var oOTPValue = oEvent.getSource().getValue();
 
 			//set confirm button to enabled where applicable
-			if (/^\d{4}$/.test(oOTPValue)) {
+			if (/^\d{6}$/.test(oOTPValue)) {
 				this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", true);
 			}
 
@@ -263,9 +292,6 @@ sap.ui.define([
 		//confirm OTP interactin
 		onPressOneTimePinConfirmButton: function() {
 
-			//local data declaration
-			var bOTPIsValid = false;
-
 			//message handling: invalid form input where applicable
 			if (this.hasMissingInput([sap.ui.getCore().byId("formOTPDialog")]).length > 0) {
 
@@ -278,22 +304,50 @@ sap.ui.define([
 
 			}
 
+			//get OTP context
+			var oOTPContext = this.getModel("AppViewModel").getProperty("/OTPContext");
+
 			//validate OTP entered against OTP
+			this.getModel("OneTimePinModel").callFunction("/validateOTP", {
 
-			//entered OTP is not valid
-			if (!bOTPIsValid) {
+				//url parameters
+				urlParameters: {
+					"OTPRequestID": oOTPContext.OTPRequestID,
+					"OTPValue": oOTPContext.OTPValue
+				},
 
-				//message handling: incorrect OTP entered	
-				this.sendStripMessage(this.getResourceBundle().getText("messageInvalidOTPEntered"),
-					sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msOneTimePinDialogMessageStrip"));
+				//success handler: validation result received
+				success: function(oData, oResponse) {
 
-				//no further processing at this point
-				return;
+					//set OTP input placeholder and invoke count down
+					if (oData.validateOTP.returnCode !== "0") {
 
-			}
+						//message handling: incorrect OTP entered	
+						this.sendStripMessage(this.getResourceBundle().getText("messageInvalidOTPEntered"),
+							sap.ui.core.MessageType.Error, sap.ui.getCore().byId("msOneTimePinDialogMessageStrip"));
 
-			//close OTP interaction dialog
-			sap.ui.getCore().byId("diaOneTimePin").close();
+						//no further processing at this point
+						return;
+
+					}
+
+					//close OTP interaction dialog
+					sap.ui.getCore().byId("diaOneTimePin").close();
+
+				}.bind(this),
+
+				//error handler callback function
+				error: function(oError) {
+
+					//render error in OData response 
+					this.renderODataErrorResponseToMessageStrip(oError, "msOneTimePinDialogMessageStrip");
+
+					//set view to no longer busy
+					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+
+				}.bind(this)
+
+			});
 
 		}
 

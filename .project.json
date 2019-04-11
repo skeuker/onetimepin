@@ -6,7 +6,8 @@
   "build": {
     "targetFolder": "dist",
     "sourceFolder": "webapp",
-    "buildRequired": true
+    "buildRequired": false,
+    "lastBuildDateTime": "Thu, 11 Apr 2019 11:56:09 GMT"
   },
   "generation": [
     {
@@ -50,5 +51,9 @@
     "loadJSONFiles": false,
     "loadCustomRequests": false,
     "mockRequestsFilePath": ""
+  },
+  "deploy": {
+    "destination": "SMD100",
+    "name": "/PNP/ONETIMEPIN"
   }
 }
