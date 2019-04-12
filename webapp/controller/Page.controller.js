@@ -187,7 +187,7 @@ sap.ui.define([
 								"messageOTPExpiredDoTryAgain"));
 
 							//hide message strip
-							this.getView().byId("msOneTimePinDialogMessageStrip").setVisible(false);
+							this.getMessageStrip().setVisible(false);
 
 							//clear interval
 							clearInterval(this.oOTPValidityTimer);
@@ -206,8 +206,7 @@ sap.ui.define([
 					aMessageVariables.push(sSelectedMoCValue);
 
 					//send message using requested message strip
-					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", this.getView()
-						.byId("msOneTimePinDialogMessageStrip"));
+					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", this.getMessageStrip());
 
 				}.bind(this),
 
@@ -215,7 +214,7 @@ sap.ui.define([
 				error: function(oError) {
 
 					//render error in OData response 
-					this.renderODataErrorResponseToMessageStrip(oError, "msOneTimePinDialogMessageStrip");
+					this.renderODataErrorResponseToMessageStrip(oError, this.getMessageStrip());
 
 					//set view to no longer busy
 					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
@@ -245,7 +244,7 @@ sap.ui.define([
 			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
 			//set dialog message strip to invisible for next attempt
-			this.getView().byId("msOneTimePinDialogMessageStrip").setVisible(false);
+			this.getMessageStrip().setVisible(false);
 
 		},
 
@@ -275,7 +274,7 @@ sap.ui.define([
 
 				//message handling: incomplete form input detected
 				this.sendStripMessage(this.getResourceBundle().getText("messageInputCheckedWithErrors"),
-					sap.ui.core.MessageType.Error, this.getView().byId("msOneTimePinDialogMessageStrip"));
+					sap.ui.core.MessageType.Error, this.getMessageStrip());
 
 				//no further processing at this point
 				return;
@@ -302,7 +301,7 @@ sap.ui.define([
 
 						//message handling: incorrect OTP entered	
 						this.sendStripMessage(this.getResourceBundle().getText("messageInvalidOTPEntered"),
-							sap.ui.core.MessageType.Error, this.getView().byId("msOneTimePinDialogMessageStrip"));
+							sap.ui.core.MessageType.Error, this.getMessageStrip());
 
 						//no further processing at this point
 						return;
@@ -311,7 +310,7 @@ sap.ui.define([
 
 					//message handling: OTP validated successfully
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
-						"Success", this.getView().byId("msOneTimePinDialogMessageStrip"));
+						"Success", this.getMessageStrip());
 
 					//fire OneTimePinValidated event
 					this.getOwnerComponent().fireOneTimePinValidated();
@@ -322,7 +321,7 @@ sap.ui.define([
 				error: function(oError) {
 
 					//render error in OData response 
-					this.renderODataErrorResponseToMessageStrip(oError, "msOneTimePinDialogMessageStrip");
+					this.renderODataErrorResponseToMessageStrip(oError, this.getMessageStrip());
 
 					//set view to no longer busy
 					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
@@ -330,6 +329,38 @@ sap.ui.define([
 				}.bind(this)
 
 			});
+
+		},
+
+		//get message strip control
+		getMessageStrip: function() {
+
+			//get local message strip
+			var oMessageStrip = this.getView().byId("msOneTimePinDialogMessageStrip");
+
+			//get outer message strip
+			var oOuterMessageStrip = this.getOwnerComponent().oOuterMessageStrip;
+
+			//outer message strip takes precedence
+			if (oOuterMessageStrip) {
+				oMessageStrip = oOuterMessageStrip;
+			}
+
+			//return message strip
+			return oMessageStrip;
+
+		},
+
+		/**
+		 * Send message using message strip
+		 * @private
+		 */
+		sendStripMessage: function(sText, sType, oMessageStrip) {
+
+			//message handling: send message
+			oMessageStrip.setText(sText);
+			oMessageStrip.setType(sType);
+			oMessageStrip.setVisible(true);
 
 		}
 

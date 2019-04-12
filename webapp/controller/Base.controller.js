@@ -215,13 +215,13 @@ sap.ui.define([
 		},
 		
 		//render OData error response 
-		renderODataErrorResponseToMessageStrip: function(oError, sStripMessageI18nID) {
+		renderODataErrorResponseToMessageStrip: function(oError, oMessageStrip) {
 
 			//get message text
 			var sMessageText = ErrorHandler.prototype.getODataErrorResponseMessageText.call(this, oError);
 
 			//send message using requested message strip
-			this.sendStripMessage(sMessageText, "Error", sap.ui.getCore().byId(sStripMessageI18nID));
+			this.sendStripMessage(sMessageText, "Error", oMessageStrip);
 
 		},
 

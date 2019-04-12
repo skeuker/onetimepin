@@ -71,6 +71,14 @@ sap.ui.define([
 			//feedback to caller
 			return this.sContentDensityClass;
 
+		},
+		
+		//set outer message strip reference
+		setOuterMessageStrip: function(oOuterMessageStrip){
+			
+			//keep track of outer message strip control
+			this.oOuterMessageStrip = oOuterMessageStrip;
+			
 		}
 
 	});
