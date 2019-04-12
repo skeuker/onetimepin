@@ -313,6 +313,9 @@ sap.ui.define([
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
 						"Success", this.getView().byId("msOneTimePinDialogMessageStrip"));
 
+					//fire OneTimePinValidated event
+					this.getOwnerComponent().fireOneTimePinValidated();
+
 				}.bind(this),
 
 				//error handler callback function

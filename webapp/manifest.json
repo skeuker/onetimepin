@@ -2,7 +2,7 @@
 	"_version": "1.5.0",
 	"sap.app": {
 		"id": "pnp.onetimepin",
-		"type": "application",
+		"type": "component",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -40,7 +40,6 @@
 			"phone": true
 		},
 		"supportedThemes": [
-			"sap_hcb",
 			"sap_belize"
 		]
 	},

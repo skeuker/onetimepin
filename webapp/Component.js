@@ -8,8 +8,17 @@ sap.ui.define([
 
 	return UIComponent.extend("pnp.onetimepin.Component", {
 
+		//metadata configuration
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			
+			//event: One Time Pin validated
+			events: {
+				OneTimePinValidated: {
+					parameters: {}
+				}
+			}
+			
 		},
 
 		/**
@@ -18,19 +27,19 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function() {
-			
+
 			//initialize component attributes
 			this.oErrorHandler = new ErrorHandler(this);
-			
+
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-			
+
 			//create the views based on the url/hash
 			this.getRouter().initialize();
-			
+
 		},
 
 		/**
@@ -65,5 +74,5 @@ sap.ui.define([
 		}
 
 	});
-	
+
 });

@@ -333,6 +333,9 @@ sap.ui.define([
 
 					//close OTP interaction dialog
 					sap.ui.getCore().byId("diaOneTimePin").close();
+					
+					//fire OneTimePinValidated event
+					this.getOwnerComponent().fireOneTimePinValidated();
 
 				}.bind(this),
 
