@@ -2,7 +2,7 @@
 	"_version": "1.5.0",
 	"sap.app": {
 		"id": "pnp.onetimepin",
-		"type": "component",
+		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
 			"version": "1.0.0"

@@ -12,8 +12,11 @@ sap.ui.define([
 			//instantiate view model
 			this.oViewModel = new JSONModel({});
 
-			//set view model to owner component
+			//set view model to view
 			this.setModel(this.oViewModel, "AppViewModel");
+			
+			//set view model to core
+			sap.ui.getCore().setModel(this.oViewModel, "AppViewModel");
 
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
@@ -51,18 +54,23 @@ sap.ui.define([
 
 			//instantiate new OTP context
 			var oOTPContext = {
-				"MeansOfCommunication": [{
-					"MoCID": "0",
-					"MoCValue": "082-9777444"
-				}, {
-					"MoCID": "1",
-					"MoCValue": "stefan.keuker@gmail.com"
-				}],
-				"OTPPurpose": "Block & Replace",
-				"SelectedMoCID": "0"
+				"OTPPurpose": this.getOwnerComponent().sOTPPurpose
 			};
+			
+			//set means of communication where available
+			if (this.getOwnerComponent().aMeansOfCommunication) {
+				
+				//adopt means of communication set on the component
+				oOTPContext.MeansOfCommunication = this.getOwnerComponent().aMeansOfCommunication;
+				
+				//default first available means of communication where applicable
+				if (Array.isArray(oOTPContext.MeansOfCommunication) && oOTPContext.MeansOfCommunication.length > 0) {
+					oOTPContext.SelectedMoCID = oOTPContext.MeansOfCommunication[0].MoCID;
+				}
+				
+			}
 
-			//make available new hierarchy item for binding
+			//make available new OTP context for binding
 			this.getModel("AppViewModel").setProperty("/OTPContext", oOTPContext);
 
 			//bind dialog to view model instance 

@@ -12,7 +12,7 @@
 					</form:label>
 					<form:fields>
 						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{AppViewModel>SelectedMoCID}"
-							items="{ path: 'AppViewModel>MeansOfCommunication' }" change="onOneTimePinInputChange">
+							items="{ path: 'AppViewModel>MeansOfCommunication' }">
 							<core:ListItem key="{AppViewModel>MoCID}" text="{AppViewModel>MoCValue}"/>
 						</Select>
 					</form:fields>

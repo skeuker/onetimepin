@@ -11,14 +11,37 @@ sap.ui.define([
 		//metadata configuration
 		metadata: {
 			manifest: "json",
-			
+
+			//properties		
+			properties: {
+
+				//means of comm for OTP delivery
+				aMeansOfCommunication: {
+					type: "array",
+					defaultValue: []
+				},
+
+				//message strip into which to send strip messages
+				oOuterMessageStrip: {
+					type: "object",
+					defaultValue: null
+				},
+
+				//purpose of requesting an OTP
+				sOTPPurpose: {
+					type: "string",
+					defaultValue: "Not specified"
+				}
+
+			},
+
 			//event: One Time Pin validated
 			events: {
 				OneTimePinValidated: {
 					parameters: {}
 				}
 			}
-			
+
 		},
 
 		/**
@@ -72,13 +95,48 @@ sap.ui.define([
 			return this.sContentDensityClass;
 
 		},
-		
+
 		//set outer message strip reference
-		setOuterMessageStrip: function(oOuterMessageStrip){
-			
+		setOuterMessageStrip: function(oOuterMessageStrip) {
+
 			//keep track of outer message strip control
 			this.oOuterMessageStrip = oOuterMessageStrip;
-			
+
+		},
+
+		//set means of communication
+		setMeansOfCommunication: function(aMeansOfCommunication) {
+
+			//get current OTP context
+			var oOTPContext = sap.ui.getCore().getModel("AppViewModel").getProperty("/OTPContext");
+
+			//keep track of means of communication for OTP delivery
+			this.aMeansOfCommunication = aMeansOfCommunication;
+
+			//set means of communication where available
+			if (this.aMeansOfCommunication) {
+
+				//adopt means of communication set on the component
+				oOTPContext.MeansOfCommunication = this.aMeansOfCommunication;
+
+				//default first available means of communication where applicable
+				if (Array.isArray(oOTPContext.MeansOfCommunication) && oOTPContext.MeansOfCommunication.length > 0) {
+					oOTPContext.SelectedMoCID = oOTPContext.MeansOfCommunication[0].MoCID;
+				}
+
+				//update means of communication in app view model
+				sap.ui.getCore().getModel("AppViewModel").setProperty("/OTPContext/MeansOfCommunication", aMeansOfCommunication);
+
+			}
+
+		},
+
+		//set OTP purpose 
+		setOTPPurpose: function(sOTPPurpose) {
+
+			//keep track of OTP purpose
+			this.sOTPPurpose = sOTPPurpose;
+
 		}
 
 	});
