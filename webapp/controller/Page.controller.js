@@ -15,9 +15,6 @@ sap.ui.define([
 			//set view model to view
 			this.setModel(this.oViewModel, "AppViewModel");
 			
-			//set view model to core
-			sap.ui.getCore().setModel(this.oViewModel, "AppViewModel");
-
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
 
@@ -51,32 +48,11 @@ sap.ui.define([
 
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
-
-			//instantiate new OTP context
-			var oOTPContext = {
-				"OTPPurpose": this.getOwnerComponent().sOTPPurpose
-			};
 			
-			//set means of communication where available
-			if (this.getOwnerComponent().aMeansOfCommunication) {
-				
-				//adopt means of communication set on the component
-				oOTPContext.MeansOfCommunication = this.getOwnerComponent().aMeansOfCommunication;
-				
-				//default first available means of communication where applicable
-				if (Array.isArray(oOTPContext.MeansOfCommunication) && oOTPContext.MeansOfCommunication.length > 0) {
-					oOTPContext.SelectedMoCID = oOTPContext.MeansOfCommunication[0].MoCID;
-				}
-				
-			}
-
-			//make available new OTP context for binding
-			this.getModel("AppViewModel").setProperty("/OTPContext", oOTPContext);
-
 			//bind dialog to view model instance 
 			this.getView().bindElement({
-				model: "AppViewModel",
-				path: "/OTPContext"
+				model: "OTPContextModel",
+				path: "/"
 			});
 
 			//initialize input fields
@@ -101,7 +77,7 @@ sap.ui.define([
 				clearInterval(this.oOTPValidityTimer);
 
 				//initialize UI display of OTP validity in seconds
-				this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", null);
+				this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", null);
 
 			}
 
@@ -118,11 +94,11 @@ sap.ui.define([
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", false);
 
 			//get selected means of communication and OTP purpose
-			sOTPPurpose = this.getModel("AppViewModel").getProperty("/OTPContext/OTPPurpose");
-			sSelectedMoCID = this.getModel("AppViewModel").getProperty("/OTPContext/SelectedMoCID");
+			sOTPPurpose = this.getModel("OTPContextModel").getProperty("/OTPPurpose");
+			sSelectedMoCID = this.getModel("OTPContextModel").getProperty("/SelectedMoCID");
 
 			//get attribute value for selected means of communication
-			var aMeansOfCommunication = this.getModel("AppViewModel").getProperty("/OTPContext/MeansOfCommunication");
+			var aMeansOfCommunication = this.getModel("OTPContextModel").getProperty("/MeansOfCommunication");
 			aMeansOfCommunication.forEach(function(oMeansOfCommunication) {
 
 				//where selected means of communication matches 
@@ -156,7 +132,7 @@ sap.ui.define([
 			var sOTPRequestID = this.getUUID();
 
 			//keep track of this request ID in the OTP context
-			this.getModel("AppViewModel").setProperty("/OTPContext/OTPRequestID", sOTPRequestID);
+			this.getModel("OTPContextModel").setProperty("/OTPRequestID", sOTPRequestID);
 
 			//request OTP to be sent
 			this.getModel("OneTimePinModel").callFunction("/sendOTP", {
@@ -185,13 +161,13 @@ sap.ui.define([
 						var sRemainingOTPValidity = "Enter in the next " + iRemainingOTPValidityInSeconds + " seconds...";
 
 						//set remaining OTP validity in seconds as OTP input placeholder
-						this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", sRemainingOTPValidity);
+						this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", sRemainingOTPValidity);
 
 						//end of OTP validity reached
 						if (iRemainingOTPValidityInSeconds <= 0) {
 
 							//advise user to send another OTP
-							this.getModel("AppViewModel").setProperty("/OTPContext/remainingOTPValidity", this.getResourceBundle().getText(
+							this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", this.getResourceBundle().getText(
 								"messageOTPExpiredDoTryAgain"));
 
 							//hide message strip
@@ -290,7 +266,7 @@ sap.ui.define([
 			}
 
 			//get OTP context
-			var oOTPContext = this.getModel("AppViewModel").getProperty("/OTPContext");
+			var oOTPContext = this.getModel("OTPContextModel").getData();
 
 			//validate OTP entered against OTP
 			this.getModel("OneTimePinModel").callFunction("/validateOTP", {

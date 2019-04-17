@@ -11,9 +11,9 @@
 						<Label required="true" text="How to reach me" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{AppViewModel>SelectedMoCID}"
-							items="{ path: 'AppViewModel>MeansOfCommunication' }">
-							<core:ListItem key="{AppViewModel>MoCID}" text="{AppViewModel>MoCValue}"/>
+						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{OTPContextModel>SelectedMoCID}"
+							items="{ path: 'OTPContextModel>MeansOfCommunication' }">
+							<core:ListItem key="{OTPContextModel>MoCID}" text="{OTPContextModel>MoCValue}"/>
 						</Select>
 					</form:fields>
 				</form:FormElement>
@@ -30,7 +30,7 @@
 						<Label required="true" text="One Time PIN" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{AppViewModel>OTPValue}" placeholder="{AppViewModel>remainingOTPValidity}"/>
+						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{OTPContextModel>OTPValue}" placeholder="{OTPContextModel>remainingOTPValidity}"/>
 					</form:fields>
 				</form:FormElement>
 				<form:FormElement visible="{AppViewModel>/isReSendOTPVisible}">

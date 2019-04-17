@@ -80,6 +80,10 @@
 				},
 				"dataSource": "CA_ONETIMEPIN_SRV",
 				"preload": true
+			},
+			"OTPContextModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/OTPContextModel.json"
 			}
 		},
 		"resources": {
@@ -105,14 +109,6 @@
 					"target": [
 						"Page"
 					]
-				},
-				{
-					"name": "Dialog",
-					"pattern": "Dialog",
-					"greedy": false,
-					"target": [
-						"Dialog"
-					]
 				}
 			],
 			"targets": {
@@ -122,14 +118,6 @@
 					"clearAggregation": true,
 					"viewName": "Page",
 					"viewId": "Page",
-					"viewPath": "pnp.onetimepin.view"
-				},
-				"Dialog": {
-					"viewType": "XML",
-					"transition": "slide",
-					"clearAggregation": true,
-					"viewName": "Dialog",
-					"viewId": "Dialog",
 					"viewPath": "pnp.onetimepin.view"
 				}
 			}

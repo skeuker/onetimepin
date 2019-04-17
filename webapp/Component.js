@@ -107,26 +107,12 @@ sap.ui.define([
 		//set means of communication
 		setMeansOfCommunication: function(aMeansOfCommunication) {
 
-			//get current OTP context
-			var oOTPContext = sap.ui.getCore().getModel("AppViewModel").getProperty("/OTPContext");
+			//set means of communication to current OTP context
+			this.getModel("OTPContextModel").setProperty("/MeansOfCommunication", aMeansOfCommunication);
 
-			//keep track of means of communication for OTP delivery
-			this.aMeansOfCommunication = aMeansOfCommunication;
-
-			//set means of communication where available
-			if (this.aMeansOfCommunication) {
-
-				//adopt means of communication set on the component
-				oOTPContext.MeansOfCommunication = this.aMeansOfCommunication;
-
-				//default first available means of communication where applicable
-				if (Array.isArray(oOTPContext.MeansOfCommunication) && oOTPContext.MeansOfCommunication.length > 0) {
-					oOTPContext.SelectedMoCID = oOTPContext.MeansOfCommunication[0].MoCID;
-				}
-
-				//update means of communication in app view model
-				sap.ui.getCore().getModel("AppViewModel").setProperty("/OTPContext/MeansOfCommunication", aMeansOfCommunication);
-
+			//default first available means of communication where applicable
+			if (Array.isArray(aMeansOfCommunication) && aMeansOfCommunication.length > 0) {
+				this.getModel("OTPContextModel").setProperty("/SelectedMoCID", aMeansOfCommunication[0].MoCID);
 			}
 
 		},
@@ -134,8 +120,8 @@ sap.ui.define([
 		//set OTP purpose 
 		setOTPPurpose: function(sOTPPurpose) {
 
-			//keep track of OTP purpose
-			this.sOTPPurpose = sOTPPurpose;
+			//set OTP purpose to current OTP context
+			this.getModel("OTPContextModel").setProperty("/OTPPurpose", sOTPPurpose);
 
 		}
 
