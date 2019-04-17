@@ -1,8 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
 	<MessageStrip id="msOneTimePinDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
-	<form:Form id="formOTPDialog" editable="true" width="450px" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
+	<form:Form id="formOTPDialog" editable="true" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
 		<form:layout>
-			<form:ResponsiveGridLayout singleContainerFullSize="false" adjustLabelSpan="false" labelSpanS="4" labelSpanM="4" labelSpanL="4"/>
+			<form:ResponsiveGridLayout/>
 		</form:layout>
 		<form:formContainers>
 			<form:FormContainer>
@@ -12,7 +12,7 @@
 					</form:label>
 					<form:fields>
 						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{OTPContextModel>SelectedMoCID}"
-							items="{ path: 'OTPContextModel>MeansOfCommunication' }">
+							items="{ path: 'OTPContextModel>MeansOfCommunication' }" width="280px">
 							<core:ListItem key="{OTPContextModel>MoCID}" text="{OTPContextModel>MoCValue}"/>
 						</Select>
 					</form:fields>
@@ -22,7 +22,7 @@
 						<Label required="false" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Button text="Send OTP" press="onPressSendOTP"/>
+						<Button text="Send OTP" press="onPressSendOTP" width="120px"/>
 					</form:fields>
 				</form:FormElement>
 				<form:FormElement visible="{AppViewModel>/isInputOTPVisible}">
@@ -30,7 +30,8 @@
 						<Label required="true" text="One Time PIN" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{OTPContextModel>OTPValue}" placeholder="{OTPContextModel>remainingOTPValidity}"/>
+						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{OTPContextModel>OTPValue}"
+							placeholder="{OTPContextModel>remainingOTPValidity}" width="250px"/>
 					</form:fields>
 				</form:FormElement>
 				<form:FormElement visible="{AppViewModel>/isReSendOTPVisible}">
@@ -38,7 +39,16 @@
 						<Label required="false" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Button text="Try again" press="onPressReSendOTP"/>
+						<Button text="Try again" press="onPressReSendOTP" width="120px"/>
+					</form:fields>
+				</form:FormElement>
+				<form:FormElement>
+					<form:label>
+						<Label required="false" textAlign="Left"/>
+					</form:label>
+					<form:fields>
+						<Button id="butConfirmOTP" text="Confirm" width="100px" type="Emphasized" press="onPressOneTimePinConfirmButton"
+							enabled="{AppViewModel>/isOTPConfirmButtonEnabled}" class="sapUiSmallMarginTop"/>
 					</form:fields>
 				</form:FormElement>
 			</form:FormContainer>
