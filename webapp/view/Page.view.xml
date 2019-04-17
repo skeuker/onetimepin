@@ -14,7 +14,7 @@
 								<Label required="false" textAlign="Left"/>
 							</form:label>
 							<form:fields>
-								<Button text="Confirm" width="100px" type="Emphasized" press="onPressOneTimePinConfirmButton"
+								<Button id="butConfirmOTP" text="Confirm" width="100px" type="Emphasized" press="onPressOneTimePinConfirmButton"
 									enabled="{AppViewModel>/isOTPConfirmButtonEnabled}"/>
 							</form:fields>
 						</form:FormElement>

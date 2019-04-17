@@ -295,6 +295,13 @@ sap.ui.define([
 					//message handling: OTP validated successfully
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
 						"Success", this.getMessageStrip());
+						
+					//disable all input and action controls on the OTP form
+					this.setFormInputControlsEnabled([this.getView().byId("formOTPDialog")], false);
+					this.setFormActionControlsEnabled([this.getView().byId("formOTPDialog")], false);
+					
+					//disable confirm button on view
+					this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
 
 					//fire OneTimePinValidated event
 					this.getOwnerComponent().fireOneTimePinValidated();
