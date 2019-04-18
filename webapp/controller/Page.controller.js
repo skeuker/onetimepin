@@ -14,7 +14,7 @@ sap.ui.define([
 
 			//set view model to view
 			this.setModel(this.oViewModel, "AppViewModel");
-			
+
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
 
@@ -28,7 +28,7 @@ sap.ui.define([
 			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 			this.oMessageManager = sap.ui.getCore().getMessageManager();
 			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
-			
+
 			//keep track of this controller on component to invoke initialization
 			this.getOwnerComponent().oPageController = this;
 
@@ -38,6 +38,7 @@ sap.ui.define([
 		initOTPDialogUIControlAttributes: function() {
 
 			//initialize OTP dialog UI control attributes
+			this.setViewBusy(false);
 			this.getModel("AppViewModel").setProperty("/isSendOTPVisible", true);
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
 			this.getModel("AppViewModel").setProperty("/isInputOTPVisible", false);
@@ -51,7 +52,7 @@ sap.ui.define([
 
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
-			
+
 			//bind dialog to view model instance 
 			this.getView().bindElement({
 				model: "OTPContextModel",
@@ -129,7 +130,7 @@ sap.ui.define([
 			});
 
 			//set view to busy
-			this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", true);
+			this.setViewBusy(true);
 
 			//determine an OTP request ID
 			var sOTPRequestID = this.getUUID();
@@ -148,7 +149,7 @@ sap.ui.define([
 					"MoCValue": sSelectedMoCValue
 				},
 
-				//success handler: received declaration details
+				//success handler: received One Time Pin
 				success: function(oData, oResponse) {
 
 					//set OTP input placeholder and invoke count down
@@ -187,7 +188,7 @@ sap.ui.define([
 					}.bind(this), 1000);
 
 					//set view to no longer busy
-					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+					this.setViewBusy(false);
 
 					//set array of message variables
 					aMessageVariables.push(sSelectedMoCValue);
@@ -204,7 +205,7 @@ sap.ui.define([
 					this.renderODataErrorResponseToMessageStrip(oError, this.getMessageStrip());
 
 					//set view to no longer busy
-					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+					this.setViewBusy(false);
 
 				}.bind(this)
 
@@ -253,7 +254,7 @@ sap.ui.define([
 
 		},
 
-		//confirm OTP interactin
+		//confirm OTP interaction
 		onPressOneTimePinConfirmButton: function() {
 
 			//message handling: invalid form input where applicable
@@ -270,6 +271,9 @@ sap.ui.define([
 
 			//get OTP context
 			var oOTPContext = this.getModel("OTPContextModel").getData();
+
+			//set view to busy
+			this.setViewBusy(true);
 
 			//validate OTP entered against OTP
 			this.getModel("OneTimePinModel").callFunction("/validateOTP", {
@@ -298,13 +302,16 @@ sap.ui.define([
 					//message handling: OTP validated successfully
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
 						"Success", this.getMessageStrip());
-						
+
 					//disable all input and action controls on the OTP form
 					this.setFormInputControlsEnabled([this.getView().byId("formOTPDialog")], false);
 					this.setFormActionControlsEnabled([this.getView().byId("formOTPDialog")], false);
-					
+
 					//disable confirm button on view
 					this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+
+					//set view to busy
+					this.setViewBusy(false);
 
 					//fire OneTimePinValidated event
 					this.getOwnerComponent().fireOneTimePinValidated();
@@ -318,7 +325,7 @@ sap.ui.define([
 					this.renderODataErrorResponseToMessageStrip(oError, this.getMessageStrip());
 
 					//set view to no longer busy
-					this.getModel("AppViewModel").setProperty("/isOTPDialogBusy", false);
+					this.setViewBusy(false);
 
 				}.bind(this)
 

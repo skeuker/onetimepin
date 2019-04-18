@@ -37,9 +37,21 @@ sap.ui.define([
 
 			//event: One Time Pin validated
 			events: {
+
+				//one time pin validated successfully
 				OneTimePinValidated: {
 					parameters: {}
+				},
+
+				//One Time Pin component is busy
+				IsBusy: {
+					parameters: {
+						busyState: {
+							type: "boolean"
+						}
+					}
 				}
+
 			}
 
 		},
@@ -103,19 +115,22 @@ sap.ui.define([
 			this.oOuterMessageStrip = oOuterMessageStrip;
 
 		},
-		
+
 		//initialize component for OTP delivery
-		initializeForOTPDelivery: function(){
-			
+		initializeForOTPDelivery: function() {
+
 			//initialize page controller where applicable
 			if (this.oPageController) {
 				this.oPageController.onInit();
 			}
-			
+
 			//clear OTP value and selected means of communication
 			this.getModel("OTPContextModel").setProperty("/OTPValue", null);
 			this.getModel("OTPContextModel").setProperty("/SelectedMoCID", null);
-			
+
+			//initialize means of communication
+			this.getModel("OTPContextModel").setProperty("/MeansOfCommunication", []);
+
 		},
 
 		//set means of communication

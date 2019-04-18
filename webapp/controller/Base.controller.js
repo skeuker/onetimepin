@@ -213,7 +213,7 @@ sap.ui.define([
 			oMessagePopover.toggle(oMessagesButton);
 
 		},
-		
+
 		//render OData error response 
 		renderODataErrorResponseToMessageStrip: function(oError, oMessageStrip) {
 
@@ -238,7 +238,7 @@ sap.ui.define([
 			}]);
 
 			//set view to no longer busy
-			this.oViewModel.setProperty("/isViewBusy", false);
+			this.setViewBusy(false);
 
 		},
 
@@ -255,7 +255,7 @@ sap.ui.define([
 			}]);
 
 			//set view to no longer busy
-			this.oViewModel.setProperty("/isViewBusy", false);
+			this.setViewBusy(false);
 
 		},
 
@@ -334,8 +334,8 @@ sap.ui.define([
 				//set messages to message popover button
 				this.setEntityMessages(aMessages);
 
-				//set view to no busy
-				this.oViewModel.setProperty("/isViewBusy", false);
+				//set view to no longer busy
+				this.setViewBusy(false);
 
 				//feedback to caller: errors occured
 				return true;
@@ -1034,6 +1034,19 @@ sap.ui.define([
 
 			//set current view as leading view
 			this.setAsLeadingView();
+
+		},
+
+		//set view busy
+		setViewBusy: function(bBusyState) {
+
+			//set view model attribute
+			this.oViewModel.setProperty("/isViewBusy", bBusyState);
+
+			//fire IsBusy event to outer component
+			this.getOwnerComponent().fireIsBusy({
+				busyState: bBusyState
+			});
 
 		}
 
