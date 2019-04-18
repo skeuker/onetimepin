@@ -28,6 +28,9 @@ sap.ui.define([
 			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 			this.oMessageManager = sap.ui.getCore().getMessageManager();
 			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
+			
+			//keep track of this controller on component to invoke initialization
+			this.getOwnerComponent().oPageController = this;
 
 		},
 

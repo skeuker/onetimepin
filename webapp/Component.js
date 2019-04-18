@@ -103,6 +103,20 @@ sap.ui.define([
 			this.oOuterMessageStrip = oOuterMessageStrip;
 
 		},
+		
+		//initialize component for OTP delivery
+		initializeForOTPDelivery: function(){
+			
+			//initialize page controller where applicable
+			if (this.oPageController) {
+				this.oPageController.onInit();
+			}
+			
+			//clear OTP value and selected means of communication
+			this.getModel("OTPContextModel").setProperty("/OTPValue", null);
+			this.getModel("OTPContextModel").setProperty("/SelectedMoCID", null);
+			
+		},
 
 		//set means of communication
 		setMeansOfCommunication: function(aMeansOfCommunication) {
