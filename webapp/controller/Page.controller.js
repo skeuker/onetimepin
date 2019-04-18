@@ -233,6 +233,9 @@ sap.ui.define([
 
 			//set means of communication select to enabled
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
+			
+			//set OTP confirm button to disabled
+			this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
 
 			//initialize input fields
 			this.resetFormInput(this.getView().byId("formOTPDialog"));
