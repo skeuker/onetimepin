@@ -37,13 +37,19 @@ sap.ui.define([
 		//initialize OTP dialog UI control attributes
 		initOTPDialogUIControlAttributes: function() {
 
+			//by default enable all input and action controls on the OTP form
+			this.setFormInputControlsEnabled([this.getView().byId("formOTPDialog")], true);
+			this.setFormActionControlsEnabled([this.getView().byId("formOTPDialog")], true);
+
 			//initialize OTP dialog UI control attributes
-			this.setViewBusy(false);
 			this.getModel("AppViewModel").setProperty("/isSendOTPVisible", true);
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
 			this.getModel("AppViewModel").setProperty("/isInputOTPVisible", false);
 			this.getModel("AppViewModel").setProperty("/isReSendOTPVisible", false);
 			this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+
+			//ensure view is not busy
+			this.setViewBusy(false);
 
 		},
 
@@ -293,6 +299,9 @@ sap.ui.define([
 						//message handling: incorrect OTP entered	
 						this.sendStripMessage(this.getResourceBundle().getText("messageInvalidOTPEntered"),
 							sap.ui.core.MessageType.Error, this.getMessageStrip());
+
+						//ensure view is not busy
+						this.setViewBusy(false);
 
 						//no further processing at this point
 						return;
