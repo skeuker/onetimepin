@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(UIComponent, Device, models, ErrorHandler) {
 	"use strict";
 
-	return UIComponent.extend("pnp.onetimepin.Component", {
+	var oOTPComponent = UIComponent.extend("pnp.onetimepin.Component", {
 
 		//metadata configuration
 		metadata: {
@@ -72,9 +72,6 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
-			//create the views based on the url/hash
-			this.getRouter().initialize();
-
 		},
 
 		/**
@@ -120,8 +117,8 @@ sap.ui.define([
 		initializeForOTPDelivery: function() {
 
 			//initialize page controller where applicable
-			if (this.oPageController) {
-				this.oPageController.onInit();
+			if (this.oOTPController) {
+				this.oOTPController.onInit();
 			}
 
 			//clear OTP value and selected means of communication
@@ -155,5 +152,8 @@ sap.ui.define([
 		}
 
 	});
+
+	//return component
+	return oOTPComponent;
 
 });

@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(BaseController, JSONModel) {
 	"use strict";
 
-	return BaseController.extend("pnp.onetimepin.controller.Page", {
+	return BaseController.extend("pnp.onetimepin.controller.OTP", {
 
 		//on initialization
 		onInit: function() {
@@ -15,11 +15,19 @@ sap.ui.define([
 			//set view model to view
 			this.setModel(this.oViewModel, "AppViewModel");
 
+			//set OTP context model to view
+			if (this.getModel("OTPContextModel")) {
+
+				//bind dialog to OTP context model root
+				this.getView().bindElement({
+					model: "OTPContextModel",
+					path: "/"
+				});
+
+			}
+
 			//initialize UI control attributes
 			this.initOTPDialogUIControlAttributes();
-
-			//attach to display event for navigation without hash change 
-			this.getRouter().getTarget("Page").attachDisplay(this.onDisplay, this);
 
 			//get resource bundle
 			this.oResourceBundle = this.getResourceBundle();
@@ -30,12 +38,15 @@ sap.ui.define([
 			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
 
 			//keep track of this controller on component to invoke initialization
-			this.getOwnerComponent().oPageController = this;
+			this.getOwnerComponent().oOTPController = this;
 
 		},
 
 		//initialize OTP dialog UI control attributes
 		initOTPDialogUIControlAttributes: function() {
+			
+			//reset all input on OTP form
+			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
 			//by default enable all input and action controls on the OTP form
 			this.setFormInputControlsEnabled([this.getView().byId("formOTPDialog")], true);
@@ -50,23 +61,6 @@ sap.ui.define([
 
 			//ensure view is not busy
 			this.setViewBusy(false);
-
-		},
-
-		//display of One Time Pin view
-		onDisplay: function() {
-
-			//initialize UI control attributes
-			this.initOTPDialogUIControlAttributes();
-
-			//bind dialog to view model instance 
-			this.getView().bindElement({
-				model: "OTPContextModel",
-				path: "/"
-			});
-
-			//initialize input fields
-			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
 		},
 
@@ -233,7 +227,7 @@ sap.ui.define([
 
 			//set means of communication select to enabled
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
-			
+
 			//set OTP confirm button to disabled
 			this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
 

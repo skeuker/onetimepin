@@ -45,7 +45,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "pnp.onetimepin.view.App",
+			"viewName": "pnp.onetimepin.view.OTP",
 			"type": "XML"
 		},
 		"dependencies": {
@@ -92,35 +92,6 @@
 					"uri": "css/style.css"
 				}
 			]
-		},
-		"routing": {
-			"config": {
-				"routerClass": "sap.m.routing.Router",
-				"viewType": "XML",
-				"viewPath": "pnp.onetimepin.view",
-				"controlId": "app",
-				"controlAggregation": "pages"
-			},
-			"routes": [
-				{
-					"name": "Page",
-					"pattern": "",
-					"greedy": false,
-					"target": [
-						"Page"
-					]
-				}
-			],
-			"targets": {
-				"Page": {
-					"viewType": "XML",
-					"transition": "slide",
-					"clearAggregation": true,
-					"viewName": "Page",
-					"viewId": "Page",
-					"viewPath": "pnp.onetimepin.view"
-				}
-			}
 		}
 	},
 	"sap.platform.abap": {

@@ -1,0 +1,4 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns="sap.m"
+	controllerName="pnp.onetimepin.controller.OTP" xmlns:html="http://www.w3.org/1999/xhtml" busy="{AppViewModel>/isViewBusy}">
+	<core:Fragment xmlns:core="sap.ui.core" fragmentName="pnp.onetimepin.fragment.OneTimePin" type="XML"/>
+</mvc:View>
