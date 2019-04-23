@@ -44,7 +44,7 @@ sap.ui.define([
 
 		//initialize OTP dialog UI control attributes
 		initOTPDialogUIControlAttributes: function() {
-			
+
 			//reset all input on OTP form
 			this.resetFormInput(this.getView().byId("formOTPDialog"));
 
@@ -164,11 +164,22 @@ sap.ui.define([
 						//build string of remaining OTP validity
 						var sRemainingOTPValidity = "Enter in the next " + iRemainingOTPValidityInSeconds + " seconds...";
 
-						//set remaining OTP validity in seconds as OTP input placeholder
-						this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", sRemainingOTPValidity);
+						//get access to OTP input control
+						var oOTPInput = this.getView().byId("inputOTP");
+
+						//where no OTP value has been entered as yet
+						if (!oOTPInput.getValue()) {
+							
+							//set remaining OTP validity in seconds as OTP input placeholder where applicable
+							this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", sRemainingOTPValidity);
+						
+						}
 
 						//end of OTP validity reached
 						if (iRemainingOTPValidityInSeconds <= 0) {
+							
+							//clear OTP value that might be present at this moment
+							oOTPInput.setValue(null);
 
 							//advise user to send another OTP
 							this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", this.getResourceBundle().getText(
@@ -243,10 +254,10 @@ sap.ui.define([
 		onOneTimePinInputChange: function(oEvent) {
 
 			//get value in OTP input field
-			var oOTPValue = oEvent.getSource().getValue();
+			var iOTPValue = oEvent.getSource().getValue();
 
 			//set confirm button to enabled where applicable
-			if (/^\d{6}$/.test(oOTPValue)) {
+			if (/^\d{6}$/.test(iOTPValue)) {
 				this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", true);
 			}
 

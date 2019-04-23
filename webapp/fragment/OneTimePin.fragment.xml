@@ -2,7 +2,7 @@
 	<MessageStrip id="msOneTimePinDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
 	<form:Form id="formOTPDialog" editable="true" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
 		<form:layout>
-			<form:ResponsiveGridLayout/>
+			<form:ResponsiveGridLayout />
 		</form:layout>
 		<form:formContainers>
 			<form:FormContainer>
@@ -31,7 +31,7 @@
 					</form:label>
 					<form:fields>
 						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{OTPContextModel>OTPValue}"
-							placeholder="{OTPContextModel>remainingOTPValidity}" width="250px"/>
+							placeholder="{OTPContextModel>remainingOTPValidity}" width="250px" type="Number"/>
 					</form:fields>
 				</form:FormElement>
 				<form:FormElement visible="{AppViewModel>/isReSendOTPVisible}">
