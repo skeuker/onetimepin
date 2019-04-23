@@ -2,13 +2,13 @@
 	<MessageStrip id="msOneTimePinDialogMessageStrip" showCloseButton="true" showIcon="true" class="sapUiTinyMarginBottom" visible="false"/>
 	<form:Form id="formOTPDialog" editable="true" class="sapUiTinyMarginBottom sapUiMediumMarginEnd">
 		<form:layout>
-			<form:ResponsiveGridLayout />
+			<form:ResponsiveGridLayout singleContainerFullSize="true" columnsM="1" columnsL="1"/>
 		</form:layout>
 		<form:formContainers>
 			<form:FormContainer>
 				<form:FormElement>
 					<form:label>
-						<Label required="true" text="How to reach me" textAlign="Left"/>
+						<Label required="true" text="{i18n>labelMeansOfCommunication}" width="100%"/>
 					</form:label>
 					<form:fields>
 						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{OTPContextModel>SelectedMoCID}"
@@ -27,7 +27,7 @@
 				</form:FormElement>
 				<form:FormElement visible="{AppViewModel>/isInputOTPVisible}">
 					<form:label>
-						<Label required="true" text="One Time PIN" textAlign="Left"/>
+						<Label required="true" text="One Time Pin" textAlign="Left"/>
 					</form:label>
 					<form:fields>
 						<Input id="inputOTP" liveChange="onOneTimePinInputChange" value="{OTPContextModel>OTPValue}"
