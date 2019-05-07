@@ -13,7 +13,7 @@
 					<form:fields>
 						<Select id="inputMoCID" enabled="{AppViewModel>/isMoCInputEnabled}" forceSelection="false" selectedKey="{OTPContextModel>SelectedMoCID}"
 							items="{ path: 'OTPContextModel>MeansOfCommunication' }" width="280px">
-							<core:ListItem key="{OTPContextModel>MoCID}" text="{OTPContextModel>MoCValue}"/>
+							<core:ListItem key="{OTPContextModel>MoCID}" text="{OTPContextModel>MoCValueText}"/>
 						</Select>
 					</form:fields>
 				</form:FormElement>
