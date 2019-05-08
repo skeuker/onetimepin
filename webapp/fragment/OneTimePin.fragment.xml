@@ -47,8 +47,8 @@
 						<Label required="false" textAlign="Left"/>
 					</form:label>
 					<form:fields>
-						<Button id="butConfirmOTP" text="Confirm" width="100px" type="Emphasized" press="onPressOneTimePinConfirmButton"
-							enabled="{AppViewModel>/isOTPConfirmButtonEnabled}" class="sapUiSmallMarginTop"/>
+						<Button id="butVerifyOTP" text="Verify" width="100px" type="Emphasized" press="onPressOneTimePinVerifyButton"
+							enabled="{AppViewModel>/isOTPVerifyButtonEnabled}" class="sapUiSmallMarginTop"/>
 					</form:fields>
 				</form:FormElement>
 			</form:FormContainer>

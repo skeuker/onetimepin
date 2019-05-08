@@ -57,7 +57,7 @@ sap.ui.define([
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
 			this.getModel("AppViewModel").setProperty("/isInputOTPVisible", false);
 			this.getModel("AppViewModel").setProperty("/isReSendOTPVisible", false);
-			this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+			this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", false);
 
 			//ensure view is not busy
 			this.setViewBusy(false);
@@ -71,6 +71,7 @@ sap.ui.define([
 			var sOTPPurpose;
 			var sSelectedMoCID;
 			var sSelectedMoCValue;
+			var sSelectedMoCValueText;
 			var aMessageVariables = [];
 			var iRemainingOTPValidityInSeconds;
 
@@ -110,6 +111,9 @@ sap.ui.define([
 
 					//adopt means of communication value
 					sSelectedMoCValue = oMeansOfCommunication.MoCValue;
+					
+					//adopt textual description of selected means of communication
+					sSelectedMoCValueText = oMeansOfCommunication.MoCValueText;
 
 					//format as mobile phone number where applicable
 					if (oMeansOfCommunication.MoCID === "0") {
@@ -126,7 +130,9 @@ sap.ui.define([
 						sSelectedMoCValue = sSelectedMoCValue.replace(/\+/, "00");
 
 					}
+					
 				}
+				
 			});
 
 			//set view to busy
@@ -178,18 +184,14 @@ sap.ui.define([
 						//end of OTP validity reached
 						if (iRemainingOTPValidityInSeconds <= 0) {
 							
-							//clear OTP value that might be present at this moment
-							oOTPInput.setValue(null);
-
-							//advise user to send another OTP
-							this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", this.getResourceBundle().getText(
-								"messageOTPExpiredDoTryAgain"));
-
-							//hide message strip
-							this.getMessageStrip().setVisible(false);
-
 							//clear interval
 							clearInterval(this.oOTPValidityTimer);
+							
+							//initialize OTP dialog
+							this.initOTPDialogUIControlAttributes();
+							
+							//send message to advise that OTP has expired
+							this.sendStripMessage(this.getResourceBundle().getText("messageOTPExpiredDoTryAgain"), "Warning", this.getMessageStrip());
 
 						}
 
@@ -202,7 +204,7 @@ sap.ui.define([
 					this.setViewBusy(false);
 
 					//set array of message variables
-					aMessageVariables.push(sSelectedMoCValue);
+					aMessageVariables.push(sSelectedMoCValueText);
 
 					//send message using requested message strip
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPSentSuccessfully", aMessageVariables), "Success", this.getMessageStrip());
@@ -240,7 +242,7 @@ sap.ui.define([
 			this.getModel("AppViewModel").setProperty("/isMoCInputEnabled", true);
 
 			//set OTP confirm button to disabled
-			this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+			this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", false);
 
 			//initialize input fields
 			this.resetFormInput(this.getView().byId("formOTPDialog"));
@@ -258,18 +260,18 @@ sap.ui.define([
 
 			//set confirm button to enabled where applicable
 			if (/^\d{6}$/.test(iOTPValue)) {
-				this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", true);
+				this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", true);
 			}
 
 			//set confirm button to disabled where applicable
 			else {
-				this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+				this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", false);
 			}
 
 		},
 
 		//confirm OTP interaction
-		onPressOneTimePinConfirmButton: function() {
+		onPressOneTimePinVerifyButton: function() {
 
 			//message handling: invalid form input where applicable
 			if (this.hasMissingInput([this.getView().byId("formOTPDialog")]).length > 0) {
@@ -325,7 +327,7 @@ sap.ui.define([
 					this.setFormActionControlsEnabled([this.getView().byId("formOTPDialog")], false);
 
 					//disable confirm button on view
-					this.getModel("AppViewModel").setProperty("/isOTPConfirmButtonEnabled", false);
+					this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", false);
 
 					//set view to busy
 					this.setViewBusy(false);
