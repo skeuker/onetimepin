@@ -111,7 +111,7 @@ sap.ui.define([
 
 					//adopt means of communication value
 					sSelectedMoCValue = oMeansOfCommunication.MoCValue;
-					
+
 					//adopt textual description of selected means of communication
 					sSelectedMoCValueText = oMeansOfCommunication.MoCValueText;
 
@@ -130,9 +130,9 @@ sap.ui.define([
 						sSelectedMoCValue = sSelectedMoCValue.replace(/\+/, "00");
 
 					}
-					
+
 				}
-				
+
 			});
 
 			//set view to busy
@@ -175,21 +175,21 @@ sap.ui.define([
 
 						//where no OTP value has been entered as yet
 						if (!oOTPInput.getValue()) {
-							
+
 							//set remaining OTP validity in seconds as OTP input placeholder where applicable
 							this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", sRemainingOTPValidity);
-						
+
 						}
 
 						//end of OTP validity reached
 						if (iRemainingOTPValidityInSeconds <= 0) {
-							
+
 							//clear interval
 							clearInterval(this.oOTPValidityTimer);
-							
+
 							//initialize OTP dialog
 							this.initOTPDialogUIControlAttributes();
-							
+
 							//send message to advise that OTP has expired
 							this.sendStripMessage(this.getResourceBundle().getText("messageOTPExpiredDoTryAgain"), "Warning", this.getMessageStrip());
 
@@ -303,7 +303,7 @@ sap.ui.define([
 				//success handler: validation result received
 				success: function(oData, oResponse) {
 
-					//set OTP input placeholder and invoke count down
+					//OTP sent is not valid
 					if (oData.validateOTP.returnCode !== "0") {
 
 						//message handling: incorrect OTP entered	
@@ -317,6 +317,17 @@ sap.ui.define([
 						return;
 
 					}
+					
+					//clear OTP timer interval where applicable
+					if (this.oOTPValidityTimer) {
+
+						//terminate timer event
+						clearInterval(this.oOTPValidityTimer);
+
+						//initialize UI display of OTP validity in seconds
+						this.getModel("OTPContextModel").setProperty("/remainingOTPValidity", null);
+
+					}
 
 					//message handling: OTP validated successfully
 					this.sendStripMessage(this.getResourceBundle().getText("messageOTPValidatedSuccessfully"),
@@ -326,7 +337,7 @@ sap.ui.define([
 					this.setFormInputControlsEnabled([this.getView().byId("formOTPDialog")], false);
 					this.setFormActionControlsEnabled([this.getView().byId("formOTPDialog")], false);
 
-					//disable confirm button on view
+					//disable verify button on view
 					this.getModel("AppViewModel").setProperty("/isOTPVerifyButtonEnabled", false);
 
 					//set view to busy
