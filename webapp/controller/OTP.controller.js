@@ -161,8 +161,15 @@ sap.ui.define([
 					//set OTP input placeholder and invoke count down
 					if (oData.results && oData.results.length > 0) {}
 
-					//set OTP validity period
-					iRemainingOTPValidityInSeconds = 60;
+					//set OTP validity period by means of communication
+					switch (sSelectedMoCID) {
+						case "0": //SMS
+							iRemainingOTPValidityInSeconds = 60;
+							break;
+						case "1": //email
+							iRemainingOTPValidityInSeconds = 120;
+							break;
+					}
 
 					//set OTP input placeholder to indicate remaining validity time
 					this.oOTPValidityTimer = setInterval(function() {
@@ -317,7 +324,7 @@ sap.ui.define([
 						return;
 
 					}
-					
+
 					//clear OTP timer interval where applicable
 					if (this.oOTPValidityTimer) {
 

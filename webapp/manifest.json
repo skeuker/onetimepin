@@ -76,7 +76,8 @@
 				"settings": {
 					"defaultOperationMode": "Server",
 					"defaultBindingMode": "TwoWay",
-					"defaultCountMode": "Request"
+					"defaultCountMode": "Request",
+					"tokenHandling": false
 				},
 				"dataSource": "CA_ONETIMEPIN_SRV",
 				"preload": true

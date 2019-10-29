@@ -132,7 +132,7 @@ sap.ui.define([
 
 		//set means of communication
 		setMeansOfCommunication: function(aMeansOfCommunication) {
-
+			
 			//set means of communication to current OTP context
 			this.getModel("OTPContextModel").setProperty("/MeansOfCommunication", aMeansOfCommunication);
 
